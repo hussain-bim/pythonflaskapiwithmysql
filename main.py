@@ -1,8 +1,8 @@
 import pymysql
 from app import app
-from tables import Results
 from db_config import mysql
 from flask import flash, render_template, request, redirect
+from flask_table import Col, create_table
 from werkzeug.security import generate_password_hash, check_password_hash
 
 @app.route('/new_user')
@@ -47,10 +47,15 @@ def users():
 		cursor = conn.cursor(pymysql.cursors.DictCursor)
 		# cursor.execute("SELECT * FROM tbl_user")
 		args = ['tbl_user']
-		cursor.callproc('SELECT_FROM_TBL_V3', args)
+		cursor.callproc('SELECT_FROM_TBL_V5', args)
 		rows = cursor.fetchall()
-		table = Results(rows)
-		table.border = True
+		tablecls = create_table('tablecls')
+		for header in rows[0].keys():
+			tablecls.add_column(header, Col(header))
+		# tablecls.add_linkcol('Edit', 'edit_view', url_kwargs=dict(id='user_id'))
+		# tablecls.add_linkcol('Delete', 'delete_user', url_kwargs=dict(id='user_id'))
+		table = tablecls(rows)
+		tablecls.border = True
 		return render_template('users.html', table=table)
 	except Exception as e:
 		print(e)
