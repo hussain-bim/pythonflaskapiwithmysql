@@ -6,6 +6,6 @@ mysql = MySQL()
 # MySQL configurations
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = ''
-app.config['MYSQL_DATABASE_DB'] = 'wingtiptoys'
+app.config['MYSQL_DATABASE_DB'] = 'id8813320_flutter'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
