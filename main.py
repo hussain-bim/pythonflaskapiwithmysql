@@ -1,11 +1,10 @@
-import pymysql
 import traceback
-from mysql.connector import FieldType
+import pymysql
+from flask import flash, render_template, request, redirect
+from flask_table import Col, create_table, ButtonCol
+from werkzeug.security import generate_password_hash
 from app import app
 from db_config import mysql
-from flask import flash, render_template, request, redirect
-from flask_table import Col, LinkCol, create_table, ButtonCol
-from werkzeug.security import generate_password_hash, check_password_hash
 
 global choice, pk_value_dict, columns_dict_keys, where_condition, table_desc, column_names, columns_desc
 
@@ -82,7 +81,7 @@ def add_record_view():
         form_content = form_content + "</p></dl><p>\
             <input type=\"submit\" value=\"Submit\"></p></form>"
         if columns_desc:
-            return render_template('add_generic.html', form_content=form_content)
+            return render_template('add.html', form_content=form_content)
         else:
             return 'Error loading page for adding record'
     except Exception as e:
@@ -156,7 +155,7 @@ def users():
         for (table_name) in rows:
             table_list.append(table_name['Tables_in_' + app.config['MYSQL_DATABASE_DB']])
         if request.method == 'GET':
-            return render_template('users.html',
+            return render_template('index.html',
                                    table_list=table_list,
                                    choice=choice)
         if request.method == 'POST' and 'table_menu' in request.form:
@@ -194,7 +193,7 @@ def users():
             table = tablecls(rows)
             tablecls.border = True
 
-            return render_template('users.html', table=table, table_list=table_list)
+            return render_template('index.html', table=table, table_list=table_list)
     except Exception as e:
         print(e)
         err_lineno = str(traceback.format_exc()).split(",")[1]
@@ -234,7 +233,7 @@ def edit_view_generic():
             <input name=\"where_condition\" value=\"" + where_condition + "\" type=\"hidden\">\
             <input type=\"submit\" value=\"Submit\"></p></form>"
         if rows:
-            return render_template('edit_v2.html', form_content=form_content)
+            return render_template('edit.html', form_content=form_content)
         else:
             return 'Error loading for record with conditions: ' + where_condition
     except Exception as e:

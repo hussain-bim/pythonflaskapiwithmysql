@@ -7,7 +7,9 @@ Objective of this application
 
 Implementation steps
 
-1. Use XAMPP to import the MySQL Database dump 'wintiptoys.sql'
-2. Open the project 'user_crud_v3' in PyCharm or other Python editors
-3. Run main.py
-4. The application will start on http://127.0.0.1:5000/
+1. Use XAMPP to import the MySQL Database dump 'wintiptoys.sql' and id8813320_flutter.sql
+2. Install the required packages:
+3. Open the project in PyCharm or other Python editors
+4. Run main.py
+5. The application will start on http://127.0.0.1:5000/
+6. To change the database to id8813320_flutter - update the db_config.py in the field app.config['MYSQL_DATABASE_DB']
