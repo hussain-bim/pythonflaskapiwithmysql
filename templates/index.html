@@ -19,6 +19,8 @@
 		<div class="col-md-6">
 			<form method="POST" action="/">
 				<div class="form-group">
+					<p><input name=db_name class="form-control" type="text" placeholder="db_name" autocomplete="off"></p>
+
 					<select name="table_menu" class="form-control">
 					{% for tz in table_list %}
 					<option value={{ tz }}>{{ tz }}</option>
