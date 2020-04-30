@@ -1,6 +1,7 @@
 import traceback
 import pymysql
-from flask import flash, render_template, request, redirect
+import random
+from flask import flash, render_template, request, redirect, jsonify
 from flask_table import Col, create_table, ButtonCol
 from werkzeug.security import generate_password_hash
 from app import app
@@ -15,44 +16,6 @@ global choice, pk_value_dict, columns_dict_keys, where_condition, table_desc, co
 # 3. Add and Edit screens on the same page
 # 4. Ajax
 # 5. Code review and clean up
-
-@app.route('/new_user')
-def add_user_view():
-    return render_template('add.html')
-
-
-@app.route('/add', methods=['POST'])
-def add_user():
-    global choice, pk_value_dict, columns_dict_keys, where_condition, table_desc, column_names, columns_desc
-    conn = None
-    cursor = None
-    try:
-        _name = request.form['inputName']
-        _email = request.form['inputEmail']
-        _password = request.form['inputPassword']
-        # validate the received values
-        if _name and _email and _password and request.method == 'POST':
-            # do not save password as a plain text
-            _hashed_password = generate_password_hash(_password)
-            # save edits
-            sql = "INSERT INTO tbl_user(user_name, user_email, user_password) VALUES(%s, %s, %s)"
-            data = (_name, _email, _hashed_password,)
-            conn = mysql.connect()
-            cursor = conn.cursor()
-            cursor.execute(sql, data)
-            conn.commit()
-            flash('Record added successfully!')
-            return redirect('/')
-        else:
-            return 'Error adding record with conditions: ' + where_condition
-    except Exception as e:
-        print(e)
-        err_lineno = str(traceback.format_exc()).split(",")[1]
-        print(err_lineno)
-    finally:
-        cursor.close()
-        conn.close()
-
 
 @app.route('/add_record_view', methods=['GET', 'POST'])
 def add_record_view():
@@ -138,6 +101,53 @@ def add_generic():
         cursor.close()
         conn.close()
 
+@app.route('/get_word')
+def languages():
+    '''Return data in json format'''
+    lst = ["Python", 'HTML', 'JavaScript', 'CSS']
+    words = {}
+    words['choice'] = random.choice(lst)
+    return jsonify(words)
+
+@app.route('/update_tables_list', methods=['GET', 'POST'])
+def update_tables_list():
+    global choice, pk_value_dict, columns_dict_keys, where_condition, table_desc, column_names, columns_desc
+    conn = None
+    cursor = None
+    try:
+        params = request.values
+        choice = params.get('db_name')
+        print(choice)
+        app.config['MYSQL_DATABASE_DB'] = (
+            choice if choice else app.config['MYSQL_DATABASE_DB'])
+
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        choice = ''
+        table_list = []
+
+        cursor.execute('SHOW TABLES')
+        rows = cursor.fetchall()
+        table_name_dict = {}
+        i = 0
+        for table_name in rows:
+            table_name_dict['table_name' + str(i)] = table_name['Tables_in_' + app.config['MYSQL_DATABASE_DB']]
+            i = i + 1
+
+        responses = {}
+        responses['response'] = table_name_dict
+
+        if table_name_dict:
+            return jsonify(table_name_dict)
+        else:
+            return 'Error loading tables list'
+    except Exception as e:
+        print(e)
+        err_lineno = str(traceback.format_exc()).split(",")[1]
+        print(err_lineno)
+    finally:
+        cursor.close()
+        conn.close()
 
 @app.route('/', methods=['GET', 'POST'])
 def users():
@@ -145,6 +155,7 @@ def users():
     conn = None
     cursor = None
     try:
+
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
         choice = ''
@@ -158,13 +169,14 @@ def users():
             return render_template('index.html',
                                    table_list=table_list,
                                    choice=choice)
-        if request.method == 'POST' and 'table_menu' in request.form:
+        if request.method == 'POST':
             choice = request.form.get('table_menu')
-            args = [choice]
             cursor.execute('SELECT * FROM ' + choice)
             rows = cursor.fetchall()
-
+            if not rows:
+                return "No records found"
             tablecls = create_table('tablecls')
+
             columns_dict_keys = rows[0].keys()
             for header in rows[0].keys():
                 tablecls.add_column(header, Col(header))
