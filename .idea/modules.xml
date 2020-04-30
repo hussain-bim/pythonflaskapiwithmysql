@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://E:/Python/Flask_API_with_MySQL/flaskwithAjax/.idea/flaskwithAjax.iml" filepath="E:/Python/Flask_API_with_MySQL/flaskwithAjax/.idea/flaskwithAjax.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/pythonflaskapiwithmysql.iml" filepath="$PROJECT_DIR$/.idea/pythonflaskapiwithmysql.iml" />
     </modules>
   </component>

@@ -1,0 +1,53 @@
+.all {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top:0px;
+    bottom: 200px;
+    left: 0px;
+    right: 300px;
+    margin: auto;
+}
+
+body {
+  background: linear-gradient(to left, #616161, #9bc5c3);
+}
+
+
+#language {
+  font-size: 25px;
+  color: #B22222;
+}
+
+h1 {
+  color: #8B4513;
+}
+
+.parent {
+  width: 450px;
+  height: 150px;
+  text-align: center;
+  padding: 20px 17px;
+}
+
+.one, .two {
+  height: 100px;
+  width: 200px;
+  float: left;
+}
+
+button {
+ outline: 0;
+ color: #009688;
+ background: #fff;
+ border-radius: 10px;
+ border: 3px solid #009688;
+ font-size: 17px;
+ padding: 7px 12px;
+ min-width: 120px;
+}
+
+button:hover, .ghost-button:active {
+  color:#fff;
+  background:#009688;
+}
