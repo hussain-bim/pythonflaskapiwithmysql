@@ -4,6 +4,9 @@
     	<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}" />
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     	<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+		{{ toastr.include_jquery() }}
+		{{ toastr.include_toastr_css() }}
+		{{ toastr.message() }}
   	</head>
 
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
@@ -12,58 +15,53 @@
 	$(document).ready(function() {
 	  $("#update_table_list").click(function() {
 	  	var param = {db_name: $("#db_name").val()};
-	  	console.log($("#db_name").val());
 		$.getJSON('/update_tables_list', param, function(dat) {
-		  $("#db_name_resp").text(dat['table_name1']);
           $("#table_menu").empty();
           $('#table_menu').val(null).trigger('change');
             var myselect = $('<select>');
             $.each (dat, function (bb) {
-                console.log (dat[bb]);
-                     myselect.append( $('<option></option>').val(dat[bb]).html(dat[bb]) );
+                myselect.append( $('<option></option>').val(dat[bb]).html(dat[bb]) );
             });
-            console.log(myselect.html())
             $('#table_menu').append(myselect.html());
 		});
+	  });
+	  $("#view_records").click(function(){
+	    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+	    var param = {table_menu: $("#table_menu").val()};
+	    $.getJSON($SCRIPT_ROOT+"/", param, function(dat) {
+	    	$("table").empty();
+	        $("table").html(dat);
+	    });
 	  });
 	});
 </script>
 
-<p>
-	{% with messages = get_flashed_messages() %}
-	  {% if messages %}
-		<ul class=flashes>
-		{% for message in messages %}
-		  <li>{{ message }}</li>
-		{% endfor %}
-		</ul>
-	  {% endif %}
-	{% endwith %}
-</p>
-
-<div class="container">
-	<div class="row">
-		<div class="col-md-6">
-            <p><input id=db_name class="form-control" type="text" placeholder="db_name" autocomplete="off"></p>
-            <a id="db_name_resp">Get Language</a>
-            <button id=update_table_list class="btn btn-primary align-right" style="margin:5px">Connect to DB</button>
-			<form method="POST" action="/">
-				<div class="form-group">
-					<select id="table_menu" name="table_menu" class="form-control">
-					{% for tz in table_list %}
-					<option id="table_list" value={{ tz }}>{{ tz }}</option>
-					{% endfor %}
-					</select>
-					<p></p>
-					<button type="submit" class="btn btn-primary align-right" style="margin:5px" value="Submit">View Records</button>
-					<button name=add_record class="btn btn-primary align-right" style="margin:5px" value="Add Record" >Add Record</button>
-				</div>
-			</form>
+<body>
+	{{ toastr.include_toastr_js() }}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<p></p>
+				<p></p>
+				<p></p>
+				<p><input id=db_name class="form-control" type="text" placeholder="db_name" autocomplete="off"></p>
+				<button id=update_table_list class="btn btn-primary align-right" style="margin:5px">Connect to DB</button>
+				<p></p>
+				<select id="table_menu" name="table_menu" class="form-control">
+				{% for tz in table_list %}
+				<option id="table_list" value={{ tz }}>{{ tz }}</option>
+				{% endfor %}
+				</select>
+				<p></p>
+				<button id=view_records  class="btn btn-primary align-right" style="margin:5px">View Records</button>
+				<button id=add_record class="btn btn-primary align-right" style="margin:5px">Add Record</button>
+				<p></p>
+				<p></p>
+			</div>
 		</div>
 	</div>
-</div>
-<div class="col-md-12 centered">
-	{% autoescape off %}
-		{{ table | safe}}
-	{% endautoescape %}
-</div>
+	<div class="col-md-12 centered">
+		{{ table | safe }}
+		{{ hhh | safe }}
+	</div>
+</body>
