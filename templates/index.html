@@ -55,7 +55,7 @@
 	{{ toastr.include_toastr_js() }}
 	<div class="container">
 		<div class="row">
-			<div class="col-md-6">
+			<div class="col-md-9">
 				<p></p>
 				<p></p>
 				<p></p>
@@ -70,6 +70,7 @@
 				<p></p>
 				<button id=view_records  class="btn btn-primary align-right" style="margin:5px">View Records</button>
 				<button id=add_record class="btn btn-primary align-right" style="margin:5px">Add Record</button>
+				<button id="save_new_record" class ="btn btn-primary align-right" style="margin:5px">Save</button>
 				<p></p>
 				<p></p>
 			</div>
@@ -77,9 +78,7 @@
 	</div>
 	<div class="col-md-12 centered">
 		{{ table | safe }}
-		<button id="save_new_record" class ="btn btn-primary align-right" style="margin:5px">Save</button>
 		<div class='addeditfields'>
-
 		</div>
 	</div>
 </body>

@@ -10,8 +10,13 @@
 }
 
 body {
-  background: linear-gradient(to left, #616161, #9bc5c3);
+  /* background: linear-gradient(to left, #616161, #9bc5c3); */
+  /* background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%); */
+  /*background: #DDDDDD;*/
+
 }
+
+
 
 
 #language {
