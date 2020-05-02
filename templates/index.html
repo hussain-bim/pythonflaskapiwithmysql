@@ -33,6 +33,21 @@
 	        $("table").html(dat);
 	    });
 	  });
+	  $("#add_record").click(function(){
+	    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+	    var param = {table_menu: $("#table_menu").val()};
+	    $.getJSON($SCRIPT_ROOT+"/add_record_view", param, function(dat) {
+	    	$(".addeditfields").empty();
+	        $(".addeditfields").html(dat);
+	    });
+	  });
+	  $("#save_new_record").click(function(){
+	    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+	    var param = $('.addeditfields').find('select, textarea, input').serialize();
+	    $.getJSON($SCRIPT_ROOT+"/add_generic", param, function(dat) {
+	    	$(".addeditfields").empty();
+	    });
+	  });
 	});
 </script>
 
@@ -62,6 +77,9 @@
 	</div>
 	<div class="col-md-12 centered">
 		{{ table | safe }}
-		{{ hhh | safe }}
+		<button id="save_new_record" class ="btn btn-primary align-right" style="margin:5px">Save</button>
+		<div class='addeditfields'>
+
+		</div>
 	</div>
 </body>

@@ -12,10 +12,11 @@ global choice, current_choice, load_startup, pk_value_dict, columns_dict_keys, w
 choice = ''
 current_choice = ''
 load_startup = ''
+# id8813320_flutter
 
 # Activities to be completed
 # 1. Hash password
-# 2. Primary keys with running serial numbers
+# 2. Primary keys with drop down / with running serial numbers
 # 3. Add and Edit screens on the same page
 # 4. Ajax
 # 5. Code review and clean up
@@ -35,7 +36,7 @@ def add_record_view():
         columns_desc = cursor.fetchall()
 
         # _hashed_password = generate_password_hash(_password)
-        editfields = "<form method=\"post\" action=\"/add_generic\"><dl><p>"
+        editfields = "<div><dl><p>"
         column_names = []
         column_types = []
         for column_name in columns_desc:
@@ -45,8 +46,8 @@ def add_record_view():
             column_names.append(column_name['Field'])
             column_types.append(column_name['Type'])
 
-        editfields = editfields + "</p></dl><p>\
-            <input type=\"submit\" value=\"Submit\"></p></form>"
+        editfields = editfields + "</p></dl><p> </p></div>"
+            # <button id=\"save_new_record\" class =\"btn btn-primary align-right\" style=\"margin:5px\" >Save</button></p></div>"
         if columns_desc:
             return jsonify(editfields)
         else:
@@ -60,7 +61,7 @@ def add_record_view():
         conn.close()
 
 
-@app.route('/add_generic', methods=['POST'])
+@app.route('/add_generic', methods=['GET', 'POST'])
 def add_generic():
     global choice, current_choice, load_startup, pk_value_dict, columns_dict_keys, where_condition, table_desc, column_names, columns_desc
     conn = None
@@ -84,7 +85,7 @@ def add_generic():
 
         # validate the received values
         # if _name and _email and _password and request.method == 'POST':
-        if request.method == 'POST':
+        if request.method == 'GET' or request.method == 'POST':
             # do not save password as a plain text
             # _hashed_password = generate_password_hash(_password)
             # save edits
@@ -94,7 +95,8 @@ def add_generic():
             cursor.execute(sql)
             conn.commit()
             flash('Record added successfully!', 'success')
-            return redirect('/')
+            load_startup = "yes"
+            return jsonify("Success")
         else:
             return 'Error adding record with conditions: ' + where_condition
     except Exception as e:
@@ -174,7 +176,7 @@ def main():
         rows = cursor.fetchall()
         for (table_name) in rows:
             table_list.append(table_name['Tables_in_' + app.config['MYSQL_DATABASE_DB']])
-        if choice:
+        if params.get('table_menu'):
             cursor.execute('SELECT * FROM ' + choice)
             rows = cursor.fetchall()
             if not rows:
@@ -206,19 +208,16 @@ def main():
 
             tablecls.add_column('Edit', ButtonCol('Edit', 'edit_view_generic', url_kwargs=pk_value_dict))
             tablecls.add_column('Delete', ButtonCol('Delete', 'delete_user', url_kwargs=pk_value_dict))
-            table = tablecls(rows)
             tablecls.border = True
-            hhh = "<table></table>"
+            table = tablecls(rows)
             if load_startup == "yes":
                 load_startup = ''
-                return render_template("index.html", table=table, hhh=hhh)
+                return render_template("index.html", table=table)
             else:
                 return jsonify(table)
         else:
             table = "<table></table>"
-            hhh = "<table>H1111</table>"
-            # editfields = "<form method=\"post\" action=\"/add_generic\"><dl><p><p><input name=\"id\" type=\"text\" placeholder=\"id\" autocomplete=\"off\" ></p><p><input name=\"post_header\" type=\"text\" placeholder=\"post_header\" autocomplete=\"off\" ></p><p><input name=\"post_body\" type=\"text\" placeholder=\"post_body\" autocomplete=\"off\" ></p></p></dl><p>            <input type=\"submit\" value=\"Submit\"></p></form>"
-            return render_template("index.html", table=table,  hhh=hhh)
+            return render_template("index.html", table=table)
     except Exception as e:
         print(e)
         err_lineno = str(traceback.format_exc()).split(",")[1]
