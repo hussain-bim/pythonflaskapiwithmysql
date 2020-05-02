@@ -3,7 +3,7 @@ import pymysql
 import random
 from flask_toastr import Toastr
 from flask import flash, render_template, request, redirect, jsonify
-from flask_table import Col, create_table, ButtonCol
+from flask_table import Col, create_table, ButtonCol, BoolCol
 from werkzeug.security import generate_password_hash
 from app import app
 from db_config import mysql
